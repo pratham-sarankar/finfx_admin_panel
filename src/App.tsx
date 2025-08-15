@@ -1,14 +1,19 @@
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/sonner";
-import DashboardPage from "./pages/dashboard";
-// import LoginPage from "./pages/login";
+import { AuthProvider } from "./contexts/auth-context";
+import { AppRouter } from "./components/app-router";
+import { ErrorBoundary } from "./components/error-boundary";
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark">
-      <DashboardPage />
-      <Toaster />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider defaultTheme="dark">
+        <AuthProvider>
+          <AppRouter />
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

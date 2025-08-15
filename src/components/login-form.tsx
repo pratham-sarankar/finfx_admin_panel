@@ -13,7 +13,8 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthService } from "@/services/auth";
 import type { LoginRequest } from "@/types/auth";
-import { StorageService } from "@/lib/storage";
+import { useAuth } from "@/contexts/auth-context";
+import { useAuthNavigation } from "@/hooks/use-auth-navigation";
 import { toast } from "sonner";
 
 export function LoginForm({
@@ -24,6 +25,8 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const { redirectToIntended } = useAuthNavigation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -37,9 +40,8 @@ export function LoginForm({
       const credentials: LoginRequest = { email, password };
       const response = await AuthService.login(credentials);
 
-      // Store token and user data securely
-      StorageService.setToken(response.token);
-      StorageService.setUserData(response.user);
+      // Use the auth context to handle login
+      login(response);
 
       // Show success toast
       toast.success("Login Successful", {
@@ -50,8 +52,8 @@ export function LoginForm({
       setEmail("");
       setPassword("");
 
-      // You can add navigation logic here
-      // navigate('/dashboard');
+      // Navigate to intended destination or dashboard
+      redirectToIntended();
     } catch (err: any) {
       // Show error toast
       toast.error("Login Failed", {
